@@ -1,40 +1,46 @@
 import os
 import shutil
 import platform
+import yaml
 
 # 常量定义：目标文件夹
 DESTINATION_FOLDER = '_overview4AI'  # 目标文件夹
 DESCRIPTION_FILE = '_DetailsForAI.txt'
-PROJECT_DESCRIPTION_FILE = '.ProjectDescription.properties'
+PROJECT_DESCRIPTION_FILE = '.ProjectDescription.yaml'
 
-def is_interesting_file(filename, interesting_extensions):
+def is_interesting_file(filename):
     """判断是否是需要处理的文件"""
-
+    interesting_extensions = [
+        '.txt', '.doc', '.docx', '.pdf',  # 文档文件
+        '.xls', '.xlsx', '.ppt', '.pptx',
+        '.c', '.cpp', '.h', '.hpp',      # C/C++源代码及头文件
+        '.cmake', 'CMakeLists.txt',       # CMake构建系统文件
+        '.py', '.pyc'                     # Python源文件及编译文件
+    ]
     return any(filename.endswith(ext) for ext in interesting_extensions)
 
-
 def read_project_description(file_path):
-    """读取ProjectDescription.properties文件，返回工程名、项目目的和给AI的提示词"""
-    project_name, project_purpose, project_prompt, project_target = "未知工程", "未知目的", "", []
+    """读取 ProjectDescription.yaml 文件，返回工程名、项目目的和给 AI 的提示词"""
+    project_name = "未知工程"
+    project_purpose = "未知目的"
+    project_prompt = ""
+    project_target = []
 
+    # 使用 PyYAML 解析 YAML 文件
     with open(file_path, mode='r', encoding='utf-8') as file:
-        lines = file.readlines()
-    
-    properties = {}
-    for line in lines:
-        # 去除行首行尾的空白字符，并跳过空行或注释
-        line = line.strip()
-        if not line or line.startswith('#'):
-            continue
-        
-        # 分割键值对
-        key, value = line.split('=', 1)
-        properties[key.strip()] = value.strip()
+        data = yaml.safe_load(file)
 
-    project_name = properties.get('project.name', "未知工程")
-    project_purpose = properties.get('project.purpose', "未知目的")
-    project_prompt = properties.get('project.prompt', "")
-    project_target = properties.get('project.target', "").split(',')
+    # 从 YAML 数据中提取项目信息
+    if data and 'project' in data:
+        project = data['project']
+        project_name = project.get('name', project_name)
+        project_purpose = project.get('purpose', project_purpose)
+        project_prompt = project.get('prompt', project_prompt)  # 假设 prompt 是字符串
+        project_target = project.get('target', project_target)  # 假设 target 是列表
+
+    # 如果 project_target 是字符串，将其转换为列表
+    if isinstance(project_target, str):
+        project_target = project_target.split(',')
 
     return project_name, project_purpose, project_prompt, project_target
 
