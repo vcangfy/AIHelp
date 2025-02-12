@@ -1,0 +1,30 @@
+# 我的工程 - 项目结构
+
+## ProjectStructure
+
+我的工程\
+    _Script2Project.py
+    test_include\
+        test_head.h
+    test_src\
+            test_func.cpp
+        test_main.cpp
+
+---
+
+## ProjectDescription
+
+Environment: Windows
+
+Information: 这是一个用于演示的工程项目，旨在展示如何解析 properties 文件。
+
+Purpose: 
+
+NextNeeds: 
+
+---
+
+## PromptToAI
+
+这是一个用于测试的prompt内容
+
