@@ -7,7 +7,14 @@
     test_include\
         test_head.h
     test_src\
+        test_ignore\
+            test_ignore.txt
+        test_son_folder\
+            deep\
+                deeper\
+                    deepfile.txt
             test_func.cpp
+        test.txt
         test_main.cpp
 
 ---
